@@ -16,10 +16,11 @@ another variable called 'inner'. */
 
 // Code Here
 
+var inner = outer()
 //Once you do that, invoke inner.
 
 //Code Here
-
+inner();
 
 
 
@@ -47,7 +48,8 @@ Create a callJake function that when invoked with '435-555-9248' returns 'Callin
 in your console. */
 
   //Code Here
-
+var callJake = callFriend('Jake');
+callJake('435-555-9248');
 
 
 
@@ -65,13 +67,19 @@ in your console. */
 properly. */
 
 //Code Here
-
+function makeCounter(){
+  var count = 0;
+  return function(){
+    count++;
+    return count;
+  }
+}
 //Uncomment this once you make your function
-//   var count = makeCounter();
-//   count(); // 1
-//   count(); // 2
-//   count(); // 3
-//   count(); // 4
+  var count = makeCounter();
+  count(); // 1
+  count(); // 2
+  count(); // 3
+  count(); // 4
 
 
 
@@ -98,10 +106,16 @@ http://stackoverflow.com/questions/17776940/javascript-module-pattern-with-examp
 
 function counterFactory(value) {
 
-  // Code here.
-
-
   return {
+      inc:function(){
+        value++;
+        return value;
+      },
+
+      dec:function(){
+        value--;
+        return value;
+      }
   }
 }
 
@@ -131,13 +145,15 @@ will return 'You're doing awesome, keep it up firstname lastname.' */
 
 function motivation(firstname, lastname) {
 
-  var welcomeText = 'You\'re doing awesome, keep it up ';
+  var welcomeText = "You're doing awesome, keep it up ";
 
   // code message function here.
-
+  function message(){
+    return (welcomeText + firstname + " " + lastname + '.');
+  }
 
   //Uncommment this to return the value of your invoked message function
-  //return message();
+  return message();
 
 }
 
@@ -175,12 +191,15 @@ var module = (function() {
   // Anything that is being returned is made public and can be invoked from
   // outside our lexical scope
   return {
-    // Code here.
+    publicMethod: function(){
+     return privateMethod()
+    }
+  // Code here.
   };
 
 })();
 
-
+module.publicMethod();
 
 /******************************************************************************\
  #PROBLEM-07
@@ -195,7 +214,14 @@ var secondLevelFriends = ["Anne", "Harry", "Quinton"];
 var allUsers = ["Tom", "Dick", "Harry", "Anne", "Quinton", "Katie", "Mary"];
 
 function findPotentialFriends(existingFriends) {
-
+  return function(notFriend){
+    for (var x = 0; x < existingFriends.length; x++) {
+      if (existingFriends[x] === notFriend){
+        return false;
+      } 
+    }
+    return true;
+  }
 }
 
 var isNotAFriend = findPotentialFriends( friends );
@@ -204,14 +230,28 @@ var isNotAFriend = findPotentialFriends( friends );
 
 
 /******************************************************************************\
- #PROBLEM-07 -- BLACK DIAMOND
+ #PROBLEM-07 -- DOUBLE BLACK DIAMOND
  \******************************************************************************/
 /* Using your findPotentialFriends function from above and the Array.filter
 method, find all potential second level friends as well as potential friends
 from allUsers. */
+// function filterFriends(arr, cb){
+//   var allTheFriends = [];
+//   if(arr.filter(cb)){
+    
+//     allTheFriends.push(arr);
+//     console.log(allTheFriends)
+//   }
+//   return allTheFriends;
+// }
 
-var potentialSecondLevelFriends = "?";
-var allPotentialFriends = "?";
+// this stuffs was just over complicated^^
+
+var potentialSecondLevelFriends = secondLevelFriends.filter(findPotentialFriends(friends));;
+console.log(potentialSecondLevelFriends);
+
+var allPotentialFriends = allUsers.filter(findPotentialFriends(friends));
+console.log(allPotentialFriends);
 
 
 /******************************************************************************\
@@ -236,9 +276,13 @@ to 5. What we need to do is console.log(i) so that it logs like so:
 
 function timeOutCounter() {
   for (var i = 0; i <= 5; i++) {
-    setTimeout(function() {
-    	console.log(i)
-	}, i * 1000)
-  }
+    function closure (innerK){
+      // console.log(innerI);
+      setTimeout(function() {
+        console.log(innerK);
+      }, i * 1000)
+    }
+    closure(i);
+    }
 }
 timeOutCounter();
